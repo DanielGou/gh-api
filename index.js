@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const emailValidator = require('email-validator')
 
 const app = express()
 
@@ -22,6 +23,18 @@ app.post("/api/add", async (req,res)=>{
 
     const { name, phone, email } = req.body
 
+    if(!emailValidator.validate(email)){
+        return res.json({ status: 'error', error: 'Email inválido.' })
+    }
+
+    if( !name && name === "" && name.length <= 2 && typeof username !== 'string'){
+        return res.json({ status: 'error', error: 'Nome inválido.' })
+    }
+    
+    if( !phone && phone === "" && phone.length < 8 && typeof username !== 'string'){
+        return res.json({ status: 'error', error: 'Telefone inválido.' })
+    }
+
     try{
         const response = await model.create({
             name, 
@@ -36,7 +49,7 @@ app.post("/api/add", async (req,res)=>{
         }
     }
 
-    res.send("ok")
+    res.send({status: "ok"})
 })
 
 app.listen(process.env.PORT, ()=>{
