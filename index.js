@@ -12,7 +12,7 @@ app.use(cors())
 
 mongoose.connect(process.env.LINK_DB, {useUnifiedTopology: true, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false } )
 
-var transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL,
@@ -58,7 +58,7 @@ app.post("/api/add", async (req,res)=>{
         }
     }
 
-    var mailOptions = {
+    const mailOptions = {
         from: 'sendfiletokindle@gmail.com',
         to: 'danielpraiadorosa@gmail.com',
         subject: 'Novo contato!',
