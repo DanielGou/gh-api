@@ -3,7 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const emailValidator = require('email-validator')
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 const app = express()
 
