@@ -62,7 +62,7 @@ app.post("/api/add", async (req,res)=>{
         from: 'sendfiletokindle@gmail.com',
         to: 'danielpraiadorosa@gmail.com',
         subject: 'Novo contato!',
-        text: `${name + phone + email}`
+        text: `Temos um novo contato! O Nome é ${name}, seu telefone é ${phone} e seu email é ${email}`
       };
       
       transporter.sendMail(mailOptions, function(error, info){
