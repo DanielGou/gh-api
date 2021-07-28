@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const emailValidator = require('email-validator')
+var nodemailer = require('nodemailer');
 
 const app = express()
 
@@ -10,6 +11,14 @@ app.use(express.json())
 app.use(cors())
 
 mongoose.connect(process.env.LINK_DB, {useUnifiedTopology: true, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false } )
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD
+    }
+  });
 
 const LeadSchema = new mongoose.Schema({
     name: { type: String, require: true },
@@ -48,6 +57,21 @@ app.post("/api/add", async (req,res)=>{
             return res.send("error")
         }
     }
+
+    var mailOptions = {
+        from: 'sendfiletokindle@gmail.com',
+        to: 'danielpraiadorosa@gmail.com',
+        subject: 'Novo contato!',
+        text: `${name + phone + email}`
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
 
     res.send({status: "ok"})
 })
