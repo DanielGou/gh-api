@@ -10,8 +10,10 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+// Conexãop com o MongoDB
 mongoose.connect(process.env.LINK_DB, {useUnifiedTopology: true, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false } )
 
+//Configuração do nodemailer
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -20,6 +22,7 @@ const transporter = nodemailer.createTransport({
     }
   });
 
+//Schema para criar um novo lead no DB
 const LeadSchema = new mongoose.Schema({
     name: { type: String, require: true },
     phone: { type: String, require: true },
@@ -28,10 +31,12 @@ const LeadSchema = new mongoose.Schema({
 
 const model = mongoose.model("LeadSchema", LeadSchema)
 
+//Rota Principal onde recebe as informações do formulário
 app.post("/api/add", async (req,res)=>{
 
     const { name, phone, email } = req.body
 
+    // Validação pelo lado da API
     if(!emailValidator.validate(email)){
         return res.json({ status: 'error', error: 'Email inválido.' })
     }
@@ -44,6 +49,7 @@ app.post("/api/add", async (req,res)=>{
         return res.json({ status: 'error', error: 'Telefone inválido.' })
     }
 
+    // Criação de um novo lead no DB
     try{
         const response = await model.create({
             name, 
@@ -58,6 +64,7 @@ app.post("/api/add", async (req,res)=>{
         }
     }
 
+    //Criação da email
     const mailOptions = {
         from: 'sendfiletokindle@gmail.com',
         to: 'danielpraiadorosa@gmail.com',
@@ -65,17 +72,20 @@ app.post("/api/add", async (req,res)=>{
         text: `Temos um novo contato! O Nome é ${name}, seu telefone é ${phone} e seu email é ${email}`
       };
       
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
+    //Envio do email
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
 
+    // Envia a resposta de que deu tudo certo
     res.send({status: "ok"})
 })
 
+// Escuta a porta configurada
 app.listen(process.env.PORT, ()=>{
     console.log("Server running")
 })
